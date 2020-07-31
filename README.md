@@ -25,7 +25,7 @@ We provide an example script to run experiments on deepDTnet_20 dataset:
 # Data
 +   `DTInet`:The DTIs in the DTInet dataset used for training and testing have been divided into the form of 10-fold cross-validation, as well as disease-drug interactions, disease-target interactions.
 +   `deepDTnet`:The DTIs in the deepDTnet dataset used for training and testing have been divided into the form of 5-fold cross-validation, as well as disease-drug interactions, disease-target interactions.
-+   `KEGG_MED`:The DTIs in the KEGG_MED dataset used for training and testing have been divided into the form of 10-fold cross-validation, as well as disease-drug interactions, disease-target interactions.
++   `KEGG_MED`:The DTIs in the KEGG_MED dataset used for training and testing have been divided into the form of 10-fold cross-validation, as well as disease-drug interactions, disease-target interactions(the disease-drug interaction matrix file is larger than 25M, and cannot be uploaded temporarily).
 
 # Note
 +   You can change the files used in the code to perform other experiments, such as cold start experiments.
