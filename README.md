@@ -29,7 +29,7 @@ We provide an example script to run experiments on deepDTnet_20 dataset:
 
 # Note
 +   You can change the files used in the code to perform other experiments, such as cold start experiments.
-+   You can also use your own dataset for experiments, and all interactions are expressed in the form of lists.
++   You can also use your own dataset for experiments, and DTIs are expressed in the form of lists.
 
 # Requirements
 +   python(v3.7.0)
