@@ -29,7 +29,7 @@ We provide an example script to run experiments on deepDTnet_20 dataset:
 
 # Note
 +   You can change the files used in the code to perform other experiments, such as cold start experiments.
-+   You can also use your own dataset for experiments, and DTIs are expressed in the form of lists.
++   You can also use your own dataset for experiments. Due to the different representations of datasets, it is not recommended that you use our code to load data.The input of HHDTI is 4 incidence matrices, which respectively represent drug-target interactions, target-drug interactions, disease-drug interactions, disease-target interactions, among which the drug-target interactions incidence matrix and the target-drug interaction incidence matrix are transposed to each other.
 
 # Requirements
 +   python(v3.7.0)
