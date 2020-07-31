@@ -36,3 +36,6 @@ We provide an example script to run experiments on deepDTnet_20 dataset:
 +   numpy(v1.18.1)
 +   pytorch(v1.1.0)
 +   scikit-learn(v0.22.1)
+
+# License
+Our code is released under MIT License (see LICENSE file for details).
