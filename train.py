@@ -16,7 +16,6 @@ from utils_deepDTnet import load_data_deepDTnet  # cold_start epoch  drug 70 tar
 from utils_DTInet import load_data_DTInet  # cold_start epoch  drug 200  target 300
 from utils_KEGG_MED import load_data_KEGG_MED  # cold_start epoch  drug 80  target 69
 from kl_loss import kl_loss
-from focal_bce_loss import Focal_Loss
 from models import HETE1
 from hypergraph_utils import generate_G_from_H
 
@@ -58,15 +57,6 @@ def train(epoch):
         loss = norm * F.binary_cross_entropy_with_logits(output.t(), H_T, pos_weight=pos_weight) + loss_train
         loss.backward()
         optimizer2.step()
-
-        # sim_outputs = torch.sigmoid(recover).t().cpu().detach().numpy()
-
-        # res_val = []
-        # for i in range(len(edge_val)):
-        #     res_val.append(sim_outputs[edge_val[i][0]][edge_val[i][1]])
-
-        # auc_val = roc_auc_score(val, res_val)
-        # aupr_val = average_precision_score(val, res_val)
 
         print('Epoch: {:04d}'.format(epoch + 1),
               'loss: {:.5f}'.format(loss.data.item()),
@@ -144,7 +134,7 @@ for i in range(args.num_fold):
 
     drug_feat, prot_feat, H, H_T = Variable(drug_feat), Variable(prot_feat), Variable(H), Variable(H_T)
 
-    loss_kl = kl_loss(parameters[0], parameters[1], pattern=0)
+    loss_kl = kl_loss(parameters[0], parameters[1])
     print("fold:", i)
     for epoch in range(args.epochs):
         auc1, aupr1 = train(epoch)
