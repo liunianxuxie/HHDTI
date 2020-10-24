@@ -153,8 +153,7 @@ def pre_processed_kegg_kg():
 # pre_processed_kegg_kg()
 
 
-def load_data_KEGG_MED(dataset_train="kegg_train_0.2_0", dataset_test="kegg_test_0.2_0",
-                        dataset_val="kegg_test_0.2_0"):
+def load_data_KEGG_MED(dataset_train="kegg_train_0.2_0", dataset_test="kegg_test_0.2_0"):
     dataset_dir = os.path.sep.join(['KEGG_MED'])
 
     # build incidence matrix
@@ -162,7 +161,7 @@ def load_data_KEGG_MED(dataset_train="kegg_train_0.2_0", dataset_test="kegg_test
     edge_all = np.genfromtxt(os.path.sep.join([dataset_dir, '{}.txt'.format("kegg_all")]), dtype=np.int32)
     edge_test = np.genfromtxt(os.path.sep.join([dataset_dir, '{}.txt'.format(dataset_test)]), dtype=np.int32)
     # print('edge_test', len(edge_test) / 2)
-    edge_val = np.genfromtxt(os.path.sep.join([dataset_dir, '{}.txt'.format(dataset_val)]), dtype=np.int32)
+    # edge_val = np.genfromtxt(os.path.sep.join([dataset_dir, '{}.txt'.format(dataset_val)]), dtype=np.int32)
     # print(edge_train)
 
     i_m = np.genfromtxt(os.path.sep.join([dataset_dir, 'drug_target_interaction.txt']), dtype=np.int32)
@@ -191,18 +190,20 @@ def load_data_KEGG_MED(dataset_train="kegg_train_0.2_0", dataset_test="kegg_test
     prot_feat1 = torch.eye(945)
     # print(drug_feat.size())  # 732, 732
     # print(prot_feat.size())  # 1915, 1915
-    # drugDisease = torch.Tensor(np.genfromtxt(os.path.sep.join([dataset_dir, 'H_drug_pathway.txt']), dtype=np.int32))
-    # proteinDisease = torch.Tensor(np.genfromtxt(os.path.sep.join([dataset_dir, 'H_target_pathway.txt']), dtype=np.int32))
+    drugDisease1 = torch.Tensor(np.genfromtxt(os.path.sep.join([dataset_dir, 'H_drug_pathway.txt']), dtype=np.int32))
+    proteinDisease1 = torch.Tensor(np.genfromtxt(os.path.sep.join([dataset_dir, 'H_target_pathway.txt']), dtype=np.int32))
     drugDisease = torch.Tensor(np.genfromtxt(os.path.sep.join([dataset_dir, 'H_drug_disease.txt']), dtype=np.int32))
     proteinDisease = torch.Tensor(np.genfromtxt(os.path.sep.join([dataset_dir, 'H_target_disease.txt']), dtype=np.int32))
-    # print(drugDisease.size())  #
-    # print(proteinDisease.size())  #
+    # print(drugDisease.size())  # 4284 360
+    # print(proteinDisease.size())  # 945 360
+    # print(drugDisease1.size())  # 4284 105
+    # print(proteinDisease1.size())  # 945 105
 
-
+    # return drugDisease1, proteinDisease1, drugDisease, proteinDisease, drug_feat1, prot_feat1, H, H_T, edge_test, test
     return drugDisease, proteinDisease, drug_feat1, prot_feat1, H, H_T, edge_test, test
 
 
-# load_data_kegg()
+# load_data_KEGG_MED()
 
 
 def generate_data_2(dataset_str="drug_target_interaction"):
@@ -339,4 +340,145 @@ def generate_data_3(object='target', dataset_str="drug_target_interaction"):
 # load_data_3(object='target')
 
 
+def Degree():
+    dataset_dir = os.path.sep.join(['KEGG_MED'])
+    edge_all = np.genfromtxt(os.path.sep.join([dataset_dir, '{}.txt'.format("kegg_all")]), dtype=np.int32)
+    print(len(edge_all))
+    H_T_all = np.zeros((4284, 945), dtype=np.int32)
 
+    for i in edge_all:
+        H_T_all[i[0]][i[1]] = 1
+
+    H_all = H_T_all.T
+
+    av_De = H_all.sum(axis=0).sum() / 4284  # 2.83
+    e_Degree_List = H_all.sum(axis=0)
+    av_Dv = H_all.sum(axis=1).sum() / 945  # 12.81
+    v_Degree_List= H_all.sum(axis=1)
+    print(av_De, av_Dv)
+    e_Degree_List.sort()  # 1, 40
+    v_Degree_List.sort()  # 1, 200
+    print(e_Degree_List[2181], v_Degree_List[472])  # 1, 3
+
+    e_div = 3
+    v_div = 12
+
+    sum1 = 0
+    n1 = 0
+    while sum1 < 6056:
+        sum1 += e_Degree_List[n1]
+        n1 += 1
+    print(n1)  # 674
+    print(e_Degree_List[3663])  # 5
+
+    sum2 = 0
+    n2 = 0
+    while sum2 < 6056:
+        sum2 += v_Degree_List[n2]
+        n2 += 1
+    print(n2)  # 1869
+    print(v_Degree_List[890])  # 62
+
+
+    edge_more = []
+    edge_less = []
+    for i in range(len(H_all)):
+        if H_all[i].sum() >= e_div:
+            for j in range(len(H_all[i])):
+                if H_all[i][j] == 1:
+                    edge_more.append([j, i])
+        else:
+            for j in range(len(H_all[i])):
+                if H_all[i][j] == 1:
+                    edge_less.append([j, i])
+
+    with open(os.path.sep.join([dataset_dir, "kegg_more_e.txt"]), "w") as f1:
+        for i in range(len(edge_more)):
+            s = str(edge_more[i]).replace('[', ' ').replace(']', ' ')
+            s = s.replace("'", ' ').replace(',', '') + '\n'
+            f1.write(s)
+
+    with open(os.path.sep.join([dataset_dir, "kegg_less_e.txt"]), "w") as f1:
+        for i in range(len(edge_less)):
+            s = str(edge_less[i]).replace('[', ' ').replace(']', ' ')
+            s = s.replace("'", ' ').replace(',', '') + '\n'
+            f1.write(s)
+
+    node_more = []
+    node_less = []
+    for i in range(len(H_T_all)):
+        if H_T_all[i].sum() >= v_div:
+            for j in range(len(H_T_all[i])):
+                if H_T_all[i][j] == 1:
+                    node_more.append([i, j])
+        else:
+            for j in range(len(H_T_all[i])):
+                if H_T_all[i][j] == 1:
+                    node_less.append([i, j])
+
+    with open(os.path.sep.join([dataset_dir, "kegg_more_v.txt"]), "w") as f1:
+        for i in range(len(node_more)):
+            s = str(node_more[i]).replace('[', ' ').replace(']', ' ')
+            s = s.replace("'", ' ').replace(',', '') + '\n'
+            f1.write(s)
+
+    with open(os.path.sep.join([dataset_dir, "kegg_less_v.txt"]), "w") as f1:
+        for i in range(len(node_less)):
+            s = str(node_less[i]).replace('[', ' ').replace(']', ' ')
+            s = s.replace("'", ' ').replace(',', '') + '\n'
+            f1.write(s)
+
+
+# Degree()
+
+
+def generate_data_4(dataset_str="kegg_more_e"):
+    # 将数据集分为训练集，测试集
+    dataset_dir = os.path.sep.join(['KEGG_MED'])
+
+    edge = np.genfromtxt(os.path.sep.join([dataset_dir, '{}.txt'.format(dataset_str)]), dtype=np.int32)  # dtype='U75'
+    # print(edge)
+
+    data = torch.utils.data.DataLoader(edge, shuffle=True)
+    edge_shuffled = []
+    for i in data:
+        edge_shuffled.append(i[0].tolist())
+    # print(edge_shuffled)
+
+    drugs = []
+    targets = []
+    for i in edge:
+        if i[0] not in drugs:
+            drugs.append(i[0])
+        if i[1] not in targets:
+            targets.append(i[1])
+
+    test_ration = [0.1]
+    for d in test_ration:
+        for a in (range(10)):
+            edge_test = edge_shuffled[a * int(len(edge_shuffled) * d): (a + 1) * int(len(edge_shuffled) * d)]
+            edge_train = edge_shuffled[: a * int(len(edge_shuffled) * d)] + edge_shuffled[(a + 1) * int(len(edge_shuffled) * d):]
+
+            test_zeros = []
+            while len(test_zeros) != len(edge_test):
+                x1 = random.sample(range(0, 4284), 1)[0]
+                y1 = random.sample(range(0, 945), 1)[0]
+                if [x1, y1] not in edge and [x1, y1] not in test_zeros and len(test_zeros) != len(edge_test):
+                    test_zeros.append([x1, y1])
+
+            edge_test = edge_test + test_zeros
+
+            with open(os.path.sep.join([dataset_dir, "kegg_train_{ratio}_{fold}_more_e.txt".format(ratio=d, fold=a)]), "w") as f0:
+                for i in range(len(edge_train)):
+                    s = str(edge_train[i]).replace('[', ' ').replace(']', ' ')
+                    s = s.replace("'", ' ').replace(',', '') + '\n'
+                    f0.write(s)
+
+            with open(os.path.sep.join([dataset_dir, "kegg_test_{ratio}_{fold}_more_e.txt".format(ratio=d, fold=a)]), "w") as f1:
+                for i in range(len(edge_test)):
+                    s = str(edge_test[i]).replace('[', ' ').replace(']', ' ')
+                    s = s.replace("'", ' ').replace(',', '') + '\n'
+                    f1.write(s)
+
+
+# generate_data_4()

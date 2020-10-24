@@ -8,7 +8,7 @@ import numpy as np
 
 
 class hyperedge_encoder(nn.Module):
-    def __init__(self, num_in_edge, num_hidden, dropout, act=F.tanh):  # 1408, 32
+    def __init__(self, num_in_edge, num_hidden, dropout, act=F.tanh):
         super(hyperedge_encoder, self).__init__()
         self.num_in_edge = num_in_edge
         self.num_hidden = num_hidden
@@ -28,7 +28,7 @@ class hyperedge_encoder(nn.Module):
 
 
 class node_encoder(nn.Module):
-    def __init__(self, num_in_node, num_hidden, dropout, act=F.tanh):  # 1482, 32
+    def __init__(self, num_in_node, num_hidden, dropout, act=F.tanh):
         super(node_encoder, self).__init__()
         self.num_in_node = num_in_node
         self.num_hidden = num_hidden
@@ -47,18 +47,19 @@ class node_encoder(nn.Module):
 
 
 class decoder2(nn.Module):
-    def __init__(self, dropout=0.5, act=torch.sigmoid):  # 32, 32, 1482, 1408
+    def __init__(self, dropout=0.5, act=torch.sigmoid):
         super(decoder2, self).__init__()
         self.dropout = nn.Dropout(dropout)
         self.act = act
 
-    def forward(self, z_node, z_hyperedge):  # 1408*16 1482*16
+    def forward(self, z_node, z_hyperedge):
         z_node_ = self.dropout(z_node)
         z_hyperedge_ = self.dropout(z_hyperedge)
         z = self.act(z_node_.mm(z_hyperedge_.t()))
         return z
 
 
+# hypergraph conv
 class HGNN_conv(nn.Module):
     def __init__(self, in_ft, out_ft, bias=True):  #
         super(HGNN_conv, self).__init__()
@@ -84,6 +85,7 @@ class HGNN_conv(nn.Module):
         return x
 
 
+"""
 class HGNN1(nn.Module):
     def __init__(self, in_ch, n_hid, dropout=0.5):
         super(HGNN1, self).__init__()
@@ -94,8 +96,10 @@ class HGNN1(nn.Module):
         x = F.dropout(x, self.dropout)
         x = F.tanh(self.hgc1(x, G))
         return x
+"""
 
 
+# HGNN with 2 hypergraph conv layers
 class HGNN2(nn.Module):
     def __init__(self, in_ch, n_hid, n_class, dropout=0.5):
         super(HGNN2, self).__init__()
@@ -109,3 +113,30 @@ class HGNN2(nn.Module):
         x = F.dropout(x, self.dropout)
         x = self.hgc2(x, G)
         return x
+
+
+class self_Attention(nn.Module):
+    def __init__(self, num, num_in, num_hidden):
+        super(self_Attention, self).__init__()
+        self.num = num
+        self.num_in = num_in
+        self.hidden = num_hidden
+        self.act1 = F.tanh
+        self.act2 = F.softmax
+        self.Wr = nn.Parameter(torch.zeros(size=(self.num_in, self.hidden), dtype=torch.float))
+        nn.init.xavier_uniform_(self.Wr.data, gain=0)
+        self.b1 = nn.Parameter(torch.zeros(self.hidden, dtype=torch.float))
+        self.P = nn.Parameter(torch.zeros(size=(self.hidden, 1), dtype=torch.float))
+        nn.init.xavier_uniform_(self.P.data, gain=0)
+        self.Mr = nn.Parameter(torch.zeros(size=(self.num, self.num), dtype=torch.float))
+
+    # def reset_parameters(self):
+    #     self.Wr.data.normal_(std=1.0 / math.sqrt(self.num_in))
+    #     self.wr.data.normal_(std=1.0 / math.sqrt(self.num_in))
+    #     self.Mr.data.normal_(std=1.0 / math.sqrt(self.num_in))
+
+    def forward(self, embedding):
+        alpha = self.act2(self.act1(embedding.mm(self.Wr + self.b1)).mm(self.P))
+        emb = embedding * alpha
+        return emb
+

@@ -18,7 +18,7 @@ def Eu_dis(x):
     return dist_mat
 
 
-def feature_concat(*F_list, normal_col=False):
+def feature_concat(normal_col=False, *F_list):
     """
     Concatenate multiple modality feature. If the dimension of a feature matrix is more than two,
     the function will reduce it into two dimension(using the last dimension as the feature dimension,

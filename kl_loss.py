@@ -1,7 +1,9 @@
 import torch
 from torch.nn.modules.module import Module
 
-
+"""
+    KL divergences of node embedding and hyperedge embedding 
+"""
 class kl_loss(Module):
     def __init__(self, num_nodes, num_edges):
         super(kl_loss, self).__init__()
