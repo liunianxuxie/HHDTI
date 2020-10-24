@@ -1,4 +1,4 @@
-# HHDTI: An approach based Heterogeneous Hypergraph for Drug-Target Interactions(DTIs) Prediction
+# Exploring Complex and Heterogeneous Correlations for Drug-Target Interactions Prediction
 
 HHDTI is a deep learning method that uses hypergraphs to model heterogeneous biological networks, integrates various interaction information, and accurately captures the topological properties of individual in the biological network to generate suitable structured embeddings for interactions prediction.
 
@@ -7,7 +7,7 @@ We provide an example script to run experiments on deepDTnet_20 dataset:
 
 +   Run `python train.py`: predict drug-target interactions, and evaluate the results with 5-fold cross-validation.
 +   You can change the dataset used, adjust the learning rate, hidden layer dimensions, etc
-    `python train.py --dataset DTInet --lr 0.002 --hidden 32`
+    `python train.py --dataset DTInet --lr 0.002 --hidden 64`
 
 
 # Code
