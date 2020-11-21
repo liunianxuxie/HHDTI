@@ -23,10 +23,9 @@ We provide an example script to run experiments on deepDTnet_20 dataset:
 
 
 # Data
-+   `DTInet`:The DTIs in the DTInet dataset used for training and testing have been divided into the form of 10-fold cross-validation, as well as disease-drug interactions, disease-target interactions.
-+   `deepDTnet`:The DTIs in the deepDTnet dataset used for training and testing have been divided into the form of 5-fold cross-validation, as well as disease-drug interactions, disease-target interactions.
-+   `KEGG_MED`:The DTIs in the KEGG_MED dataset used for training and testing have been divided into the form of 10-fold cross-validation, as well as disease-drug interactions, disease-target interactions(the disease-drug interaction matrix file is larger than 25M, and cannot be uploaded temporarily).
-
++   `DTInet`:The DTIs in the DTInet dataset used for training and testing have been divided into the form of 10-fold cross-validation, as well as disease-drug interactions, disease-target interactions. Dataset source: https://github.com/luoyunan/DTINet
++   `deepDTnet`:The DTIs in the deepDTnet dataset used for training and testing have been divided into the form of 5-fold cross-validation, as well as disease-drug interactions, disease-target interactions. Dataset source: https://github.com/ChengF-Lab/deepDTnet
++   `KEGG_MED`:The DTIs in the KEGG_MED dataset used for training and testing have been divided into the form of 10-fold cross-validation, as well as disease-drug interactions, disease-target interactions(the disease-drug interaction matrix file is larger than 25M, and cannot be uploaded temporarily). Dataset source: http://drugtargets.insight-centre.org/
 # Note
 +   You can change the files used in the code to perform other experiments, such as cold start experiments.
 +   You can also use your own dataset for experiments. Due to the different representations of datasets, it is not recommended that you use our code to load data.The input of HHDTI is 4 incidence matrices, which respectively represent drug-target interactions, target-drug interactions, disease-drug interactions, disease-target interactions, among which the drug-target interactions incidence matrix and the target-drug interaction incidence matrix are transposed to each other.
