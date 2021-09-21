@@ -69,7 +69,10 @@ class HGNN_conv(nn.Module):
             self.bias = Parameter(torch.Tensor(out_ft))
         else:
             self.register_parameter('bias', None)
+
+
         self.reset_parameters()
+
 
     def reset_parameters(self):
         stdv = 1. / math.sqrt(self.weight.size(1))
@@ -77,7 +80,9 @@ class HGNN_conv(nn.Module):
         if self.bias is not None:
             self.bias.data.uniform_(-stdv, stdv)
 
+
     def forward(self, x, G):  # x: torch.Tensor, G: torch.Tensor
+
         x = x.matmul(self.weight)
         if self.bias is not None:
             x = x + self.bias
@@ -101,14 +106,18 @@ class HGNN1(nn.Module):
 
 # HGNN with 2 hypergraph conv layers
 class HGNN2(nn.Module):
-    def __init__(self, in_ch, n_hid, n_class, dropout=0.5):
+    def __init__(self, in_ch, n_hid, n_class, n_node, emb_dim, dropout=0.5):
         super(HGNN2, self).__init__()
         self.dropout = dropout
         self.hgc1 = HGNN_conv(in_ch, n_hid)
         self.hgc2 = HGNN_conv(n_hid, n_class)
+        self.feat = nn.Embedding(n_node, emb_dim)
+        self.feat_idx = torch.arange(n_node).cuda()
+        nn.init.xavier_uniform_(self.feat.weight)
 
     def forward(self, x, G):
-        x = F.dropout(x, self.dropout)
+        x = self.feat(self.feat_idx)
+        #x = F.dropout(x, self.dropout)
         x = F.tanh(self.hgc1(x, G))
         x = F.dropout(x, self.dropout)
         x = self.hgc2(x, G)
@@ -136,7 +145,7 @@ class self_Attention(nn.Module):
     #     self.Mr.data.normal_(std=1.0 / math.sqrt(self.num_in))
 
     def forward(self, embedding):
-        alpha = self.act2(self.act1(embedding.mm(self.Wr + self.b1)).mm(self.P))
-        emb = embedding * alpha
-        return emb
+        alpha = self.act1(embedding.mm(self.Wr + self.b1)).mm(self.P)
+        # emb = embedding * alpha
+        return alpha
 
