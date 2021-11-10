@@ -1,4 +1,4 @@
-# Exploring Complex and Heterogeneous Correlations for Drug-Target Interactions Prediction
+# Exploring Complex and Heterogeneous Correlations on Hypergraph for the Prediction of Drug-Target Interactions
 
 HHDTI is a deep learning method that uses hypergraphs to model heterogeneous biological networks, integrates various interaction information, and accurately captures the topological properties of individual in the biological network to generate suitable structured embeddings for interactions prediction.
 
